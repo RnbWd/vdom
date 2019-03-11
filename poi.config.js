@@ -2,10 +2,13 @@ module.exports = {
   entry: 'src/index',
   plugins: [
     {
-      resolve: '@poi/plugin-karma'
+      resolve: '@poi/plugin-karma',
     },
     {
-      resolve: '@poi/plugin-typescript'
-    }
-  ]
+      resolve: '@poi/plugin-typescript',
+    },
+  ],
+  babel: {
+    jsx: 'h',
+  },
 }
