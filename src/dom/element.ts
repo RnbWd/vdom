@@ -2,7 +2,7 @@ import { Either, right, left } from 'fp-ts/lib/Either'
 
 import { VNode, Attributes, children } from './types'
 import { VirtualNode } from './tree'
-import { elements } from '../global'
+import global from '../global'
 
 const elEither = (vnode: VNode): Either<string, string> =>
   vnode.tag === 'text' ? left(vnode.props.content) : right(vnode.tag)
@@ -19,7 +19,11 @@ const addAttributes = (props: Attributes) => (el: HTMLElement) => {
 }
 
 const globalUuid = (uuid: string) => (el: HTMLElement) => {
-  elements[uuid] = el
+  if (!global.elements[uuid]) {
+    global.elements[uuid] = el
+  } else {
+    global.elements[`${uuid}-w`] = el
+  }
 }
 
 const addChildren = (children: children) => (el: HTMLElement) => {

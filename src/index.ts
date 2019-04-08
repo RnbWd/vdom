@@ -2,40 +2,50 @@
 import './assets/css/style.css'
 import { drawTree } from 'fp-ts/lib/Tree'
 
-import { h, render } from './dom/h'
-import { replace } from './dom/methods'
-import global, { diggy } from './global'
-
-// const title = document.createElement('h1')
-// title.textContent = 'Hello Poi!'
-// title.className = 'title'
-
-// const tip = document.createElement('div')
-// tip.textContent = 'Edit src/index.ts and save to reload.'
-// tip.className = 'tip'
-
+import { h } from './dom/h'
+import { renderRoot, update } from './dom/methods'
+import global from './global'
+window.global = global
+window.h = h
+window.draw = draw
 const tip = h('p', { class: 'tip' }, 'hi')
 const title = h('h1', { class: 'title' }, 'Hello Poi!')
-const item = h('li', {}, 'stuff')
-const list = h('ul', {}, item, item, item, item)
+const item = h('li', {}, 'vdom')
+const list = h('ul', {}, item.clone(), item.clone(), item.clone(), item.clone())
 
 function draw() {
-  return drawTree(global.tree.map(x => x.tag))
+  return drawTree(global.tree.map(x => `${x.tag} - ${x.uuid.slice(0, 3)}`))
 }
 
 global.tree = h('div', { class: 'app' }, title, tip, list)
-// global.tree = global.tree.deleteAt(tip.uuid)
 
 const root = document.getElementById('app')
 if (root) {
-  render(global.tree)(root)
+  renderRoot(root)
 }
 
-const nlist = list.prepend(item)
-console.log(tip.uuid)
-console.log(list.uuid)
-console.log(title.uuid)
+global.tree = global.tree.replace(
+  global.tree.children[0].uuid,
+  h('h1', { class: 'title' }, 'Empyrean')
+)
 
-replace(list.uuid)(nlist)
+global.tree = global.tree.replace(
+  global.tree.children[0].uuid,
+  global.tree.children[0].append(tip)
+)
 
-console.log(draw())
+global.tree = global.tree.replace(
+  global.tree.children[0].uuid,
+  global.tree.children[0].append(tip).append(tip)
+)
+
+global.tree = global.tree.delete(global.tree.children[1].uuid)
+
+global.tree = global.tree.delete(global.tree.children[0].children[1].uuid)
+
+global.tree = global.tree.replace(
+  global.tree.children[0].children[1].uuid,
+  h('h1', { class: 'title' }, 'vdom')
+)
+
+setInterval(update, 100)

@@ -2,8 +2,7 @@ import nanoid from 'nanoid'
 import { Attributes } from './types'
 import { VirtualNode } from './tree'
 import { createElement } from './element'
-
-let HTML_ROOT: HTMLElement = document.createElement('div')
+import global from '../global'
 
 const textNodes = (child: string | VirtualNode) =>
   typeof child === 'string'
@@ -15,10 +14,3 @@ export const h = (
   props: Attributes,
   ...children: Array<VirtualNode | string>
 ) => new VirtualNode(tag, props, children.map(textNodes), nanoid())
-
-export const render = (tree: VirtualNode) => (
-  root: HTMLElement = HTML_ROOT
-) => {
-  HTML_ROOT = root
-  root.appendChild(createElement(tree))
-}
